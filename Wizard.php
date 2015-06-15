@@ -1,63 +1,55 @@
 <?php
+
 /*
- * This file is part of the chd7well project.
+ * This file is part of the 7well project.
  *
- * (c) chd7well project <http://github.com/chd7well/>
+ * (c) 7well project <http://github.com/chd7well>
  *
- * For the full copyright and license information, please view the LICENSE
+ * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
-namespace chd7well\wizard;
-use Yii;
+
+use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use yii\helpers\ArrayHelper;
-use chd7well\wizard\WizardAsset;
-
-class Wizard extends \kartik\base\Widget
-{
 
 /**
-* @inherit doc
-*/
-protected $_pluginName = 'wizard';
-
-
-public $enableNavbar = true;
-public $enableProgressbar = true;
-public $tabs = [];
-/**
-* Initializes the widget
-*/
-public function init()
-{
-parent::init();
-}
-/**
-* Renders the widget.
-*/
-public function run()
-{
-	$id = $this->id;
-	echo $this->render('wizard', ['aid'=>$id, 'tabs'=>$this->tabs]);
-	$this->registerAssets();
-	
-}
-
-/**
-* Registers the needed assets
-*/
-public function registerAssets()
-{
-	$id = $this->id;
-$view = $this->getView();
-$view->registerJs("jQuery('#rootwizard$id').bootstrapWizard({onTabShow: function(tab, navigation, index) {" . '
-			var $total = navigation.find(\'li\').length;
-			var $current = index+1;
-			var $percent = ($current/$total) * 100;' . "
-			$('#rootwizard$id').find('#bar$id').css({width:" . '$percent+\'%\'});
-		}});');
-WizardAsset::register($view);
-
-}
-
-}
+ * @var yii\web\View $this
+ */
+?>
+<div id="rootwizard<?= $aid ?>">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container">
+				<ul>
+					<?php 
+					$i = 1;
+					foreach($tabs as $tab)
+					{
+						echo "<li><a href=\"#tab$i\" data-toggle=\"tab\">" . $tab['tabtitle'] . "</a></li>";
+						$i++;
+					}
+					?>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div  class="progress xs">
+		<div id="bar<?= $aid ?>" class="progress-bar progress-bar-green" style="width: 0%;"></div>
+	</div>
+	<div class="tab-content">
+		<?php 
+		$i = 1;
+		foreach($tabs as $tab)
+		{
+			echo "<div class=\"tab-pane\" id=\"tab$i\">" . $tab['tabcontent'] . "</div>";
+			$i++;
+		}
+		?>
+		<ul class="pager wizard">
+			<li class="previous first" style="display:none;"><a href="javascript:;"><?= Yii::t('app', 'First') ?></a></li>
+			<li class="previous"><a href="javascript:;"><?= Yii::t('app', 'Previous') ?></a></li>
+			<li class="next last" style="display:none;"><a href="javascript:;"><?= Yii::t('app', 'Last') ?></a></li>
+		  	<li class="next"><a href="javascript:;"><?= Yii::t('app', 'Next') ?></a></li>
+		</ul>
+	</div>	
+</div>
